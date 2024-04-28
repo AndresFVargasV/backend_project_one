@@ -2,9 +2,9 @@
   "name": "backend_project_one",
   "version": "1.0.0",
   "description": "This is an API project for an e-commerce book service.",
-  "main": "index.js",
+  "main": "_index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon _index.js"
   },
   "keywords": [],
   "author": "",
