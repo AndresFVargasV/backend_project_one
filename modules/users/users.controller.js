@@ -1,57 +1,88 @@
-const {readUsersMongo, readUsersbyIDMongo, createUserMongo} = require('./users.actions');
+const {
+  readUsersMongo,
+  readUsersbyIDMongo,
+  createUserMongo,
+  updateUserMongo,
+  deleteUserMongo
+} = require("./users.actions");
+const jwt = require("jsonwebtoken");
+const dotend = require("dotenv");
 
+dotend.config();
 
-async function readUsersbyID(data){
-    const searchResult = await readUsersbyIDMongo(data);
+async function readUsersbyID(data) {
+  const searchResult = await readUsersbyIDMongo(data);
 
-    if (!searchResult) {
-        throw new Error("No existe el usuario");
-    }
-    
-    return searchResult;
+  if (!searchResult) {
+    throw new Error("No existe el usuario");
+  }
+
+  return searchResult;
 }
 
-async function readUsers(){
-    const searchResult = await readUsersMongo();
+async function readUsers() {
+  const searchResult = await readUsersMongo();
 
-    if (!searchResult) {
-        throw new Error("No se encontraron usuarios");
-    }
-    
-    return searchResult;
+  if (!searchResult) {
+    throw new Error("No se encontraron usuarios");
+  }
+
+  return searchResult;
 }
 
-async function createUser(data){
+async function createUser(data) {
+  const identification = data.identification;
 
-    const identification = data.identification;
-    
-    const user = await readUsersbyIDMongo(identification);
+  const user = await readUsersbyIDMongo(identification);
 
-    if (user) {
-        throw new Error("El usuario ya existe");
-    } else {
-        const creationResult = await createUserMongo(data);
-        return creationResult;
-    }
-    
+  if (user) {
+    throw new Error("El usuario ya existe");
+  } else {
+    const creationResult = await createUserMongo(data);
+    return creationResult;
+  }
 }
 
-async function updateUser(data) {
-    const updateResult = await updateUserMongo(data);
+async function updateUser(data, token) {
+  // Verificar el token JWT para obtener el ID de usuario
+  const decodedToken = jwt.verify(token, process.env.SECRET_KEY); // 'secreto' es la clave secreta para firmar y verificar el token
+  const userId = decodedToken.identification;
 
-    return updateResult;
+  const existingUser = await readUsersbyIDMongo(userId);
+
+  if (!existingUser) {
+    throw new Error("Usuario no encontrado");
+  }
+
+  const updateResult = await updateUserMongo(userId, data);
+
+  return updateResult;
 }
 
-async function deleteUser(data) {
-    const deleteResult = await deleteUserMongo(data);
+async function deleteUser(data, token) {
+  // Verificar el token JWT para obtener el ID de usuario
+  const decodedToken = jwt.verify(token, process.env.SECRET_KEY); // 'secreto' es la clave secreta para firmar y verificar el token
+  const userId = decodedToken.identification;
 
-    return deleteResult;
+  if (userId !== data) {
+    throw new Error("No hay coincidencia de usuario");
+  }
+
+  const existingUser = await readUsersbyIDMongo(userId);
+
+  if (!existingUser || !existingUser.active) {
+    throw new Error("Usuario no encontrado o ya fue eliminado");
+  }
+
+  const deleteResult = await deleteUserMongo(data);
+
+  return deleteResult;
 }
 
 module.exports = {
-    readUsers,
-    readUsersbyID,
-    createUser,
-    updateUser,
-    deleteUser
-}
+  readUsers,
+  readUsersbyID,
+  createUser,
+  updateUser,
+  deleteUser,
+};

@@ -1,73 +1,109 @@
 const express = require("express");
 const router = express.Router();
-const { readUsers, readUsersbyID, createUser, updateUser, deleteUser } = require("./users.controller");
+const {
+  readUsers,
+  readUsersbyID,
+  createUser,
+  updateUser,
+  deleteUser,
+} = require("./users.controller");
 
 async function getUsersbyID(req, res) {
   try {
     const users = await readUsersbyID(req.params.id);
-    res.status(200).json({ 
-        ...users 
+    res.status(200).json({
+      ...users,
     });
   } catch (error) {
-    res.status(500).json({mensaje: error.message});
+    res.status(500).json({ mensaje: error.message });
   }
 }
 
 async function getAllUsers(req, res) {
-    try {
-        const users = await readUsers();
-        res.status(200).json(users);
-    } catch (error) {
-        res.status(500).json({mensaje: error.message});
-    }
+  try {
+    const users = await readUsers();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
 }
 
-async function postUsers(req, res){
-    try {
+async function postUsers(req, res) {
+  try {
+    const users = await createUser(req.body);
 
-        const users = await createUser(req.body);
-
-        res.status(200).json({
-            mensaje: "Exito. 👍"
-        })
-    } catch (error) {
-        res.status(500).json({mensaje: error.message});
+    if (users.modifiedCount === 0) {
+        throw new Error("No se pudo crear el usuario");
     }
-    
-}
 
+    res.status(200).json({
+      mensaje: "Exito. 👍",
+    });
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
+}
 
 async function patchUsers(req, res) {
-    try {
-        const users = await updateUser(req.body);
+  try {
+    // Extraer el token del encabezado "Authorization"
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1]; // Separar el token del prefijo 'Bearer'
 
-        if (!users) {
-            throw new Error("No se pudo actualizar el usuario");
-        }
 
-        res.status(200).json(users);
-    } catch (error) {
-        res.status(500).json({mensaje: error.message});
+    if (!token) {
+      return res
+        .status(401)
+        .json({ error: "Token de autenticación no proporcionado" });
     }
+
+    const users = await updateUser(req.body, token);
+
+    if (users.modifiedCount === 0) {
+      throw new Error("No se pudo actualizar el usuario");
+    }
+
+    res.status(200).json({ mensaje: "Usuario actualizado" });
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
 }
 
 async function deleteUsers(req, res) {
-    try {
-        const users = await deleteUser(req.body);
+  try {
 
-        if (!users) {
-            throw new Error("No se pudo eliminar el usuario");
-        }
-        res.status(200).json(users);
-    } catch (error) {
-        res.status(500).json({mensaje: error.message});
+    const userID = req.params.id;
+
+    // Extraer el token del encabezado "Authorization"
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1]; // Separar el token del prefijo 'Bearer'
+
+    if (!token) {
+        return res
+          .status(401)
+          .json({ error: "Token de autenticación no proporcionado" });
     }
+
+    if (!userID) {
+      return res.status(400).json({ error: "ID de usuario no proporcionado" });
+    }
+
+    const users = await deleteUser(userID, token);
+
+    if (users.modifiedCount === 0) {
+        throw new Error("No se pudo borrar el usuario");
+    }
+
+    res.status(200).json({ mensaje: "Usuario eliminado" });
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
 }
 
 router.get("/", getAllUsers);
 router.get("/:id", getUsersbyID);
 router.post("/", postUsers);
 router.patch("/", patchUsers);
-router.delete("/", deleteUsers);
+router.delete("/:id", deleteUsers);
 
 module.exports = router;

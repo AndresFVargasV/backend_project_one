@@ -23,9 +23,23 @@ async function createUserMongo(data) {
     return userCreated;
 }
 
+async function updateUserMongo(userId, data) {
+    const userUpdated = await User.updateOne({ identification: userId }, data);
+
+    return userUpdated;
+}
+
+async function deleteUserMongo(userId) {
+    const userDeleted = await User.updateOne({ identification: userId }, { active: false});
+
+    return userDeleted;
+}
+
 
 module.exports = {
     readUsersMongo,
     readUsersbyIDMongo,
-    createUserMongo
+    createUserMongo,
+    updateUserMongo,
+    deleteUserMongo
 };

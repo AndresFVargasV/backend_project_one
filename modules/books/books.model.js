@@ -8,7 +8,8 @@ const libroSchema = new mongoose.Schema({
   datePublisher: { type: Date, required: true },
   publisher: { type: String, required: true },
   author: { type: String, required: true },
-  price: { type: mongoose.Types.Decimal128, required: true }
+  price: { type: mongoose.Types.Decimal128, required: true },
+  active: { type: Boolean, default: true }
 }, {
   versionKey: false,
   timestamps: true
