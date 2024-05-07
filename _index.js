@@ -2,9 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const app = express();
+const dotend =  require("dotenv");
+
+// Load the environment variables
+dotend.config();
 
 // Enable CORS
 app.use(cors());
+
+// Enable JSON body parsing
+app.use(express.json());
 
 // Define the main route
 app.get("/", (req, res) => {
@@ -13,7 +20,7 @@ app.get("/", (req, res) => {
 
 // Connect to the database
 try {
-  mongoose.connect("mongodb://localhost:27017/e-comerse-db");
+  mongoose.connect(process.env.URL);
   console.log("Connected to the database");
 } catch (error) {
   console.log("Could not connect to the database");

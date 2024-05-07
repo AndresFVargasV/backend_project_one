@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose')
 
 const pedidoSchema = new mongoose.Schema({
   idUser: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' },
@@ -9,4 +9,4 @@ const pedidoSchema = new mongoose.Schema({
 
 const Pedido = mongoose.model('Pedido', pedidoSchema);
 
-export default Pedido;
+module.exports = Pedido;

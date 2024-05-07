@@ -7,4 +7,4 @@ const detallePedidoSchema = new mongoose.Schema({
 
 const DetallePedido = mongoose.model('DetallePedido', detallePedidoSchema);
 
-export default DetallePedido;
+module.exports = DetallePedido;

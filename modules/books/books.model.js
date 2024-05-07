@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose')
 
 const libroSchema = new mongoose.Schema({
   idUSer: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' },
@@ -12,4 +12,4 @@ const libroSchema = new mongoose.Schema({
 
 const Libro = mongoose.model('Libro', libroSchema);
 
-export default Libro;
+module.exports = Libro;

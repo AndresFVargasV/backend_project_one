@@ -1,19 +1,34 @@
 const { model } = require('mongoose');
 const {readUsersMongo, createUserMongo} = require('./users.actions');
 
-async function readUsers(query){
-    const searchResult = await readUsersMongo(query);
+async function readUsers(){
+    const searchResult = await readUsersMongo();
     
     return searchResult;
 }
 
 async function createUser(data){
+    
     const creationResult = await createUserMongo(data);
 
     return creationResult;
 }
 
-model.exports = {
+async function updateUser(data) {
+    const updateResult = await updateUserMongo(data);
+
+    return updateResult;
+}
+
+async function deleteUser(data) {
+    const deleteResult = await deleteUserMongo(data);
+
+    return deleteResult;
+}
+
+module.exports = {
     readUsers,
-    createUser
+    createUser,
+    updateUser,
+    deleteUser
 }
