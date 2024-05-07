@@ -1,5 +1,16 @@
 const User = require('./users.model'); 
 
+async function readUsersbyIDMongo(data) {
+    const user = await User.findOne({
+        $or: [
+          { identification: data },
+          { mail: data }
+        ]
+      }).lean();
+
+    return user;
+}
+
 async function readUsersMongo() {
     const users = await User.find();
 
@@ -15,5 +26,6 @@ async function createUserMongo(data) {
 
 module.exports = {
     readUsersMongo,
+    readUsersbyIDMongo,
     createUserMongo
 };

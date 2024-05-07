@@ -1,33 +1,37 @@
 const express = require("express");
 const router = express.Router();
-const { readUsers, createUser, updateUser, deleteUser } = require("./users.controller");
+const { readUsers, readUsersbyID, createUser, updateUser, deleteUser } = require("./users.controller");
 
-async function getUsers(req, res) {
+async function getUsersbyID(req, res) {
   try {
-    const users = await readUsers();
+    const users = await readUsersbyID(req.params.id);
     res.status(200).json({ 
         ...users 
     });
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).json({mensaje: error.message});
   }
+}
+
+async function getAllUsers(req, res) {
+    try {
+        const users = await readUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({mensaje: error.message});
+    }
 }
 
 async function postUsers(req, res){
     try {
-        console.log(req.body);
 
         const users = await createUser(req.body);
-
-        if (!users) {
-            throw new Error("No se pudo crear el usuario");
-        }
 
         res.status(200).json({
             mensaje: "Exito. 👍"
         })
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).json({mensaje: error.message});
     }
     
 }
@@ -43,7 +47,7 @@ async function patchUsers(req, res) {
 
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).json({mensaje: error.message});
     }
 }
 
@@ -56,12 +60,12 @@ async function deleteUsers(req, res) {
         }
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).json({mensaje: error.message});
     }
 }
 
-
-router.get("/", getUsers);
+router.get("/", getAllUsers);
+router.get("/:id", getUsersbyID);
 router.post("/", postUsers);
 router.patch("/", patchUsers);
 router.delete("/", deleteUsers);
