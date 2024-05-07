@@ -35,7 +35,7 @@ async function createUser(data) {
 
   const user = await readUsersbyIDMongo(identification);
 
-  if (user) {
+  if (user && user.active) {
     throw new Error("El usuario ya existe");
   } else {
     const creationResult = await createUserMongo(data);
@@ -50,7 +50,7 @@ async function updateUser(data, token) {
 
   const existingUser = await readUsersbyIDMongo(userId);
 
-  if (!existingUser) {
+  if (!existingUser || !existingUser.active) {
     throw new Error("Usuario no encontrado");
   }
 

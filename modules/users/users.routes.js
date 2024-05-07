@@ -12,7 +12,7 @@ async function getUsersbyID(req, res) {
   try {
     const users = await readUsersbyID(req.params.id);
     res.status(200).json({
-      ...users,
+      ...users
     });
   } catch (error) {
     res.status(500).json({ mensaje: error.message });
@@ -22,7 +22,7 @@ async function getUsersbyID(req, res) {
 async function getAllUsers(req, res) {
   try {
     const users = await readUsers();
-    res.status(200).json(users);
+    res.status(200).json({...users});
   } catch (error) {
     res.status(500).json({ mensaje: error.message });
   }
