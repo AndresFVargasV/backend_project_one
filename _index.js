@@ -27,15 +27,15 @@ try {
 }
 
 // Define the app routes
-//const ordersRoutes = require('./modules/orders/orders.routes')
-//const booksRoutes = require('./modules/books/books.routes')
+const ordersRoutes = require('./modules/orders/orders.routes')
+const booksRoutes = require('./modules/books/books.routes')
 const usersRoutes = require("./modules/users/users.routes");
 const authRoutes = require('./modules/auth/auth.route')
 
 app.use("/users", usersRoutes);
 app.use("/auth", authRoutes);
-//app.use('/products', booksRoutes)
-//app.use('/orders', ordersRoutes)
+app.use('/books', booksRoutes)
+app.use('/orders', ordersRoutes);
 
 // Start the server
 app.listen(3000, () => {

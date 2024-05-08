@@ -3,7 +3,7 @@ const {
   readUsersbyIDMongo,
   createUserMongo,
   updateUserMongo,
-  deleteUserMongo
+  deleteUserMongo,
 } = require("./users.actions");
 const jwt = require("jsonwebtoken");
 const dotend = require("dotenv");
@@ -30,22 +30,23 @@ async function readUsers() {
   return searchResult;
 }
 
-async function createUser(data) {
+async function createUser(data, token) {
+
   const identification = data.identification;
 
   const user = await readUsersbyIDMongo(identification);
 
   if (user && user.active) {
     throw new Error("El usuario ya existe");
-  } else {
-    const creationResult = await createUserMongo(data);
-    return creationResult;
   }
+
+  const creationResult = await createUserMongo(data);
+  return creationResult;
 }
 
 async function updateUser(data, token) {
   // Verificar el token JWT para obtener el ID de usuario
-  const decodedToken = jwt.verify(token, process.env.SECRET_KEY); // 'secreto' es la clave secreta para firmar y verificar el token
+  const decodedToken = jwt.verify(token, process.env.SECRET_KEY); // 'SECRET_KEY' es la clave secreta para firmar y verificar el token
   const userId = decodedToken.identification;
 
   const existingUser = await readUsersbyIDMongo(userId);

@@ -46,15 +46,12 @@ async function postUsers(req, res) {
 
 async function patchUsers(req, res) {
   try {
-    // Extraer el token del encabezado "Authorization"
     const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1]; // Separar el token del prefijo 'Bearer'
+    const token = authHeader && authHeader.split(" ")[1];
 
 
     if (!token) {
-      return res
-        .status(401)
-        .json({ error: "Token de autenticación no proporcionado" });
+      throw new Error("Token de autenticación no proporcionado");
     }
 
     const users = await updateUser(req.body, token);
@@ -79,13 +76,11 @@ async function deleteUsers(req, res) {
     const token = authHeader && authHeader.split(" ")[1]; // Separar el token del prefijo 'Bearer'
 
     if (!token) {
-        return res
-          .status(401)
-          .json({ error: "Token de autenticación no proporcionado" });
+        throw new Error("Token de autenticación no proporcionado");
     }
 
     if (!userID) {
-      return res.status(400).json({ error: "ID de usuario no proporcionado" });
+      throw new Error("No se proporcionó el ID del usuario");
     }
 
     const users = await deleteUser(userID, token);

@@ -2,17 +2,18 @@ const mongoose = require('mongoose');
 const { readUsers } = require('../users/users.controller');
 
 const pedidoSchema = new mongoose.Schema({
-  idUser: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' },
-  state: { type: String, enum: ["In Progress", "Completed", "Canceled"], required: true },
-  date: { type: Date, required: true },
+  idUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  state: { type: String, enum: ["In Progress", "Completed", "Canceled"], required: true, default: "In Progress" },
   totalPrice: { type: mongoose.Types.Decimal128, required: true },
-  active: { type: Boolean, default: true }
+  books: [{
+    idBook: { type: mongoose.Schema.Types.ObjectId, ref: 'Book' }
+  }]
 }, 
 {
   versionKey: false,
   timestamps: true
 });
 
-const Pedido = mongoose.model('Pedido', pedidoSchema);
+const Pedido = mongoose.model('Order', pedidoSchema);
 
 module.exports = Pedido;
