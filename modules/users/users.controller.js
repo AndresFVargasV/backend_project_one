@@ -13,7 +13,7 @@ dotend.config();
 async function readUsersbyID(data) {
   const searchResult = await readUsersbyIDMongo(data);
 
-  if (!searchResult) {
+  if (!searchResult || !searchResult.active) {
     throw new Error("No existe el usuario");
   }
 

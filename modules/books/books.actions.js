@@ -4,9 +4,16 @@ async function readBookbyIDMongo(id) {
   return Book.findById(id);
 }
 
-async function createBookMongo(userId, book) {
-  book.idUser = userId;
-  return Book.create(book);
+async function readBooksMongo(query) {
+  return Book.find(query);
 }
 
-module.exports = { readBookbyIDMongo, createBookMongo };
+async function createBookMongo(userId, book) {
+  return Book.create({ ...book, idUSer: userId });
+}
+
+async function updateBookMongo(userId, book) {
+  return Book.updateOne({ idUser: userId, _id: book._id }, book);
+}
+
+module.exports = { readBookbyIDMongo, readBooksMongo, createBookMongo };
