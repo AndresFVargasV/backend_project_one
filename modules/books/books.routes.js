@@ -1,7 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { createBook } = require('./books.controller');
+const { readBookbyID, createBook } = require('./books.controller');
 
+async function getBookbyID(req, res) {
+    try {
+        const book = await readBookbyID(req.params.id);
+        res.status(200).json(book);
+    } catch (error) {
+        res.status(500).json({mensaje: error.message});
+    }
+}
 
 async function postBook(req, res) {
     try {
@@ -16,6 +24,7 @@ async function postBook(req, res) {
     }
 }
 
+router.get('/:id', getBookbyID);
 router.post('/', postBook);
 
 module.exports = router;
