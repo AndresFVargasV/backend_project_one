@@ -12,8 +12,12 @@ async function createBookMongo(userId, book) {
   return Book.create({ ...book, idUSer: userId });
 }
 
-async function updateBookMongo(userId, book) {
-  return Book.updateOne({ idUser: userId, _id: book._id }, book);
+async function updateBookMongo(infoBook, data) {
+  return Book.updateOne({_id: infoBook._id }, data);
 }
 
-module.exports = { readBookbyIDMongo, readBooksMongo, createBookMongo };
+async function deleteBookMongo(id){
+  return Book.updateOne({_id: id}, {active: false});
+}
+
+module.exports = { readBookbyIDMongo, readBooksMongo, createBookMongo, updateBookMongo, deleteBookMongo };

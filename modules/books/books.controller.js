@@ -1,7 +1,8 @@
-const { readBookbyIDMongo, readBooksMongo, createBookMongo } = require("./books.actions");
+const { readBookbyIDMongo, readBooksMongo, createBookMongo, updateBookMongo, deleteBookMongo } = require("./books.actions");
 const jwt = require("jsonwebtoken");
 const dotend = require("dotenv");
 const { readUsersbyID } = require("../users/users.controller");
+const _ = require("lodash");
 
 dotend.config();
 
@@ -37,16 +38,41 @@ async function createBook(data, token) {
   return creationResult;
 }
 
-async function updateBook(data, token) {
+async function updateBook(idBook, data, token) {
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
   const userId = decodedToken.identification;
 
-  if (userId !== data.idUser) {
+  const infoUser = await readUsersbyID(userId);
+
+  const infoBook = await readBookbyID(idBook);
+
+  if (_.isEqual(infoUser._id, infoBook.idUSer) === false) {
     throw new Error("No puedes actualizar este libro");
   }
 
-  const updateResult = await updateBookMongo(userId, data);
+  const updateResult = await updateBookMongo(infoBook, data);
   return updateResult;
 }
 
-module.exports = { readBookbyID, readBooks, createBook };
+async function removeBook(data, token) {
+  const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
+  const userId = decodedToken.identification;
+
+  const infoUser = await readUsersbyID(userId);
+
+  const infoBook = await readBookbyID(data);
+
+  if (_.isEqual(infoUser._id, infoBook.idUSer) === false) {
+    throw new Error("No puedes eliminar este libro");
+  }
+
+  if (!infoBook.active) {
+    throw new Error("El libro ya fue eliminado");
+  }
+
+  const deletionResult = await deleteBookMongo(data);
+
+  return deletionResult;
+}
+
+module.exports = { readBookbyID, readBooks, createBook, updateBook, removeBook };

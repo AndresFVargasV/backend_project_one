@@ -13,11 +13,11 @@ async function login(data) {
     (await passValidate(data.password, validation.password))
   ) {
 
-    const token = jwt.sign({ email: data.mail, identification: validation.identification}, process.env.SECRET_KEY, {
+    const token = jwt.sign({ _id: data._id, email: data.mail, identification: validation.identification}, process.env.SECRET_KEY, {
       expiresIn: "1h",
     });
 
-    return { token: token, email: data.mail, identification: validation.identification };
+    return { token: token, email: data.mail, identification: validation.identification, _id: data._id};
 
   } else {
     throw new Error("Usuario o contraseña incorrectos");
