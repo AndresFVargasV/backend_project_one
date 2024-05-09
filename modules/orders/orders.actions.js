@@ -1,11 +1,8 @@
 const Order = require("./orders.model");
 
 async function readOrdersbyIDMongo(data) {
-  const Order = await Order.findOne({
-    $or: [{ identification: data }, { mail: data }],
-  }).lean();
-
-  return Order;
+  const OrderbyID = await Order.findOne({ _id: data }).lean();
+  return OrderbyID;
 }
 
 async function readOrdersMongo() {
@@ -26,7 +23,7 @@ async function createOrderMongo(userId, value, libros) {
 }
 
 async function updateOrderMongo(OrderId, data) {
-  const OrderUpdated = await Order.updateOne({ identification: OrderId }, data);
+  const OrderUpdated = await Order.updateOne({ _id: OrderId }, data);
 
   return OrderUpdated;
 }

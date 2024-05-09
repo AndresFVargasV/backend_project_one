@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const {
   createOrder,
+  updateOrder,
+  readOrdersbyID
 } = require("./orders.controller");
 
 async function getOrdersbyID(req, res) {
@@ -52,12 +54,10 @@ async function patchOrders(req, res) {
     const token = authHeader && authHeader.split(" ")[1]; // Separar el token del prefijo 'Bearer'
 
     if (!token) {
-      return res
-        .status(401)
-        .json({ error: "Token de autenticación no proporcionado" });
+      throw new Error("Token de autenticación no proporcionado");
     }
 
-    const orders = await updateOrder(req.body, token);
+    const orders = await updateOrder(req.params.id, req.body, token);
 
     if (orders.modifiedCount === 0) {
       throw new Error("No se pudo actualizar la orden");
@@ -102,7 +102,7 @@ async function deleteBook(req, res) {
 router.get("/", getAllOrders);
 router.get("/:id", getOrdersbyID);
 router.post("/", postOrders);
-router.patch("/", patchOrders);
+router.patch("/:id", patchOrders);
 router.delete("/:id", deleteBook);
 
 module.exports = router;

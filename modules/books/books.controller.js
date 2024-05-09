@@ -36,13 +36,11 @@ async function createBook(data, token) {
 
 async function updateBook(idBook, data, token) {
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
-  const userId = decodedToken.identification;
-
-  const infoUser = await readUsersbyID(userId);
+  const userId = decodedToken._id;
 
   const infoBook = await readBookbyID(idBook);
 
-  if (_.isEqual(infoUser._id, infoBook.idUSer) === false) {
+  if (_.isEqual(userId, infoBook.idUSer) === false) {
     throw new Error("No puedes actualizar este libro");
   }
 
@@ -52,13 +50,11 @@ async function updateBook(idBook, data, token) {
 
 async function removeBook(data, token) {
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
-  const userId = decodedToken.identification;
-
-  const infoUser = await readUsersbyID(userId);
+  const userId = decodedToken._id;
 
   const infoBook = await readBookbyID(data);
 
-  if (_.isEqual(infoUser._id, infoBook.idUSer) === false) {
+  if (_.isEqual(userId, infoBook.idUSer) === false) {
     throw new Error("No puedes eliminar este libro");
   }
 
