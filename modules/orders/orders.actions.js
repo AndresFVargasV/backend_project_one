@@ -14,13 +14,15 @@ async function readOrdersMongo() {
   return Orders;
 }
 
-async function createOrderMongo(userId, data) {
+async function createOrderMongo(userId, value, libros) {
 
-  data.userId = userId;
+  const formatBook = libros.map(libro => ({idBook: libro}))
 
-  const OrderCreated = Order.create(data);
+  console.log(formatBook)
 
-  return OrderCreated;
+  const newOrder = await Order.create({idUser: userId, totalPrice: value,  books: formatBook});
+
+  return newOrder;
 }
 
 async function updateOrderMongo(OrderId, data) {

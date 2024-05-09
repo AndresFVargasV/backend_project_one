@@ -6,6 +6,7 @@ const pedidoSchema = new mongoose.Schema({
   state: { type: String, enum: ["In Progress", "Completed", "Canceled"], required: true, default: "In Progress" },
   totalPrice: { type: mongoose.Types.Decimal128, required: true },
   books: [{
+    _id: false,
     idBook: { type: mongoose.Schema.Types.ObjectId, ref: 'Book' }
   }]
 }, 

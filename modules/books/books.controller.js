@@ -9,7 +9,7 @@ dotend.config();
 async function readBookbyID(data) {
   const searchResult = await readBookbyIDMongo(data);
 
-  if (!searchResult) {
+  if (!searchResult || !searchResult.active) {
     throw new Error("No existe el libro");
   }
 
@@ -28,13 +28,9 @@ async function readBooks(data) {
 
 async function createBook(data, token) {
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
-  const userId = decodedToken.identification;
+  const userId = decodedToken._id;
 
-  const user = await readUsersbyID(userId);
-
-  
-
-  const creationResult = await createBookMongo(user._id, data);
+  const creationResult = await createBookMongo(userId, data);
   return creationResult;
 }
 

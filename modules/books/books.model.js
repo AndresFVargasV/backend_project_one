@@ -10,9 +10,9 @@ const libroSchema = new mongoose.Schema({
   author: { type: String, required: true },
   price: { type: mongoose.Types.Decimal128, required: true },
   active: { type: Boolean, default: true },
-  orders: [{
+  /* orders: [{
     idOrder: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' }
-  }]
+  }] */
 }, {
   versionKey: false,
   timestamps: true
