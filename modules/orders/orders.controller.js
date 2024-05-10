@@ -58,6 +58,11 @@ async function updateOrder(idOrder, data, token) {
   console.log(infoOrder);
 
   if (_.toString(infoOrder.idUser) === userId && data.state === "Canceled") {
+
+    if (infoOrder.state === "Canceled") {
+      throw new Error("Esta orden ya esta cancelada.");
+    }
+
     return updateCanceled(infoOrder, idOrder, data);
   }
 
