@@ -38,9 +38,11 @@ async function updateBook(idBook, data, token) {
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
   const userId = decodedToken._id;
 
+
   const infoBook = await readBookbyID(idBook);
 
-  if (_.isEqual(userId, infoBook.idUSer) === false) {
+
+  if (_.toString(infoBook.idUSer) !== userId) {
     throw new Error("No puedes actualizar este libro");
   }
 

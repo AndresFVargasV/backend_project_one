@@ -15,8 +15,6 @@ async function createOrderMongo(userId, value, libros) {
 
   const formatBook = libros.map(libro => ({idBook: libro}))
 
-  console.log(formatBook)
-
   const newOrder = await Order.create({idUser: userId, totalPrice: value,  books: formatBook});
 
   return newOrder;

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { readUsers } = require('../users/users.controller');
 
 const pedidoSchema = new mongoose.Schema({
   idUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

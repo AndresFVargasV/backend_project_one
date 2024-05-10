@@ -3,8 +3,14 @@ const router = express.Router();
 const {
   createOrder,
   updateOrder,
-  readOrdersbyID
+  readOrdersbyID,
+  readOrders
 } = require("./orders.controller");
+
+async function getAllOrders() {
+  const orders = await readOrdersMongo();
+  return orders;
+}
 
 async function getOrdersbyID(req, res) {
   try {
@@ -58,6 +64,10 @@ async function patchOrders(req, res) {
     }
 
     const orders = await updateOrder(req.params.id, req.body, token);
+
+    if (!orders) {
+      throw new Error("No se pudo actualizar la orden por permisos");
+    }
 
     if (orders.modifiedCount === 0) {
       throw new Error("No se pudo actualizar la orden");

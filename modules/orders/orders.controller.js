@@ -8,8 +8,15 @@ const {
 const jwt = require("jsonwebtoken");
 const dotend = require("dotenv");
 const readBookbyID = require("../books/books.controller").readBookbyID;
+const updateBook = require("../books/books.controller").updateBook;
+const _ = require("lodash");
 
 dotend.config();
+
+async function readOrders() {
+  const orders = await readOrdersMongo();
+  return orders;
+}
 
 async function readOrdersbyID(data) {
   const orders = await readOrdersbyIDMongo(data);
@@ -41,21 +48,51 @@ async function createOrder(data, token) {
   return creationResult;
 }
 
+//Esta funcion se encarga de actualizar una orden y es usada por el usuario que realizo el pedido. Solo tiene permisos de cancelar.
 async function updateOrder(idOrder, data, token) {
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
   const userId = decodedToken._id;
 
   const infoOrder = await readOrdersbyID(idOrder);
 
-  if (userId !== infoOrder.idUser) {
-    throw new Error("No tienes permisos para actualizar esta orden");
+  console.log(infoOrder);
+
+  if (_.toString(infoOrder.idUser) === userId && data.state === "Canceled") {
+    return updateCanceled(infoOrder, idOrder, data);
   }
 
-  if (infoOrder.state === "Completed" && data.state === "Completed") {
-    throw new Error("Esta order ya esta completada.");
+  const idBook = infoOrder.books.map((book) => book.idBook);
+
+  const librosPromises = idBook.map((libro) => readBookbyID(libro));
+  const libros = await Promise.all(librosPromises);
+
+  const librosActivos = libros.filter((libro) => libro.active);
+
+  if (librosActivos.length !== idBook.length) {
+    throw new Error("Algunos libros ya fueron vendidos.");
   }
 
-  if (infoOrder.state === "Canceled" && data.state === "Canceled") {
+  // Quiero verficiar que los libros le pertenecen al usuario que esta vendiendo
+  const librosUser = libros.filter((libro) => _.toString(libro.idUSer) === userId);
+
+  if (librosUser.length !== idBook.length) {
+    throw new Error("Algunos libros no le pertenecen entonces no puede actualizar esta pedido.");
+  }
+
+  const updateResult = await updateOrderMongo(idOrder, data);
+
+  for (const libro of libros) {
+    console.log(libro);
+    await updateBook(libro._id, { active: false }, token);
+  }
+
+  return updateResult;
+}
+
+
+// Esta funcion se encarga de cancelar y es usada por la persona que vende libros y quien compra.
+async function updateCanceled(infoOrder, idOrder, data) {
+  if (infoOrder.state === "Canceled" && data === "Canceled") {
     throw new Error("Esta orden ya esta cancelada.");
   }
 
@@ -63,4 +100,4 @@ async function updateOrder(idOrder, data, token) {
   return updateResult;
 }
 
-module.exports = { createOrder, updateOrder, readOrdersbyID};
+module.exports = { createOrder, updateOrder, readOrdersbyID, readOrders };
