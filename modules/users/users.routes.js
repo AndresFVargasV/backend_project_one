@@ -10,6 +10,7 @@ const {
 
 async function getUsersbyID(req, res) {
   try {
+
     const users = await readUsersbyID(req.params.id);
     res.status(200).json({
       ...users

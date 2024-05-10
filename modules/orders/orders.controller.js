@@ -55,8 +55,6 @@ async function updateOrder(idOrder, data, token) {
 
   const infoOrder = await readOrdersbyID(idOrder);
 
-  console.log(infoOrder);
-
   if (_.toString(infoOrder.idUser) === userId && data.state === "Canceled") {
 
     if (infoOrder.state === "Canceled") {
@@ -68,10 +66,13 @@ async function updateOrder(idOrder, data, token) {
 
   const idBook = infoOrder.books.map((book) => book.idBook);
 
+  console.log(idBook);
+
   const librosPromises = idBook.map((libro) => readBookbyID(libro));
   const libros = await Promise.all(librosPromises);
 
   const librosActivos = libros.filter((libro) => libro.active);
+
 
   if (librosActivos.length !== idBook.length) {
     throw new Error("Algunos libros ya fueron vendidos.");

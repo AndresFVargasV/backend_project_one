@@ -1,12 +1,18 @@
 const User = require('./users.model'); 
+const mongoose = require('mongoose');
 
 async function readUsersbyIDMongo(data) {
-    const user = await User.findOne({
-        $or: [
-          { identification: data },
-          { mail: data }
-        ]
-      }).lean();
+    const isObjectId = mongoose.Types.ObjectId.isValid(data);
+
+    let user;
+
+    if (isObjectId) {
+        // Si data es un ObjectId válido, buscar por _id
+        user = await User.findOne({ _id: data }).lean();
+    } else {
+        // Si data no es un ObjectId válido, buscar por mail
+        user = await User.findOne({ mail: data }).lean();
+    }
 
     return user;
 }
@@ -24,13 +30,13 @@ async function createUserMongo(data) {
 }
 
 async function updateUserMongo(userId, data) {
-    const userUpdated = await User.updateOne({ identification: userId }, data);
+    const userUpdated = await User.updateOne({ _id: userId }, data);
 
     return userUpdated;
 }
 
 async function deleteUserMongo(userId) {
-    const userDeleted = await User.updateOne({ identification: userId }, { active: false});
+    const userDeleted = await User.updateOne({ _id: userId }, { active: false});
 
     return userDeleted;
 }

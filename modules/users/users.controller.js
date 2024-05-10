@@ -31,13 +31,20 @@ async function readUsers() {
 }
 
 async function createUser(data, token) {
-
-  const identification = data.identification;
+  const identification = data.mail;
 
   const user = await readUsersbyIDMongo(identification);
 
+  console.log(user);
+
   if (user && user.active) {
     throw new Error("El usuario ya existe");
+  }
+
+  if (user && !user.active) {
+    const update = await updateUserMongo(user._id, { active: true });
+
+    return update;
   }
 
   const creationResult = await createUserMongo(data);
@@ -47,7 +54,7 @@ async function createUser(data, token) {
 async function updateUser(data, token) {
   // Verificar el token JWT para obtener el ID de usuario
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY); // 'SECRET_KEY' es la clave secreta para firmar y verificar el token
-  const userId = decodedToken.identification;
+  const userId = decodedToken._id;
 
   const existingUser = await readUsersbyIDMongo(userId);
 
@@ -63,15 +70,18 @@ async function updateUser(data, token) {
 async function deleteUser(data, token) {
   // Verificar el token JWT para obtener el ID de usuario
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY); // 'secreto' es la clave secreta para firmar y verificar el token
-  const userId = decodedToken.identification;
+  const userId = decodedToken._id;
 
   if (userId !== data) {
     throw new Error("No hay coincidencia de usuario");
   }
 
-  const existingUser = await readUsersbyIDMongo(userId);
+  console.log(userId);
 
-  if (!existingUser || !existingUser.active) {
+  const existingUser = await readUsersbyIDMongo(userId);
+  console.log(existingUser);
+
+  if (existingUser.l || !existingUser.active) {
     throw new Error("Usuario no encontrado o ya fue eliminado");
   }
 

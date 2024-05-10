@@ -3,7 +3,7 @@ const argon2 = require("argon2");
 
 const userSchema = new mongoose.Schema(
   {
-    identification: { type: String, required: true, unique: true },
+    identification: { type: String, required: true },
     name: { type: String, required: true },
     mail: { type: String, required: true, unique: true  },
     password: { type: String, required: true },

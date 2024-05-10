@@ -56,7 +56,7 @@ async function removeBook(data, token) {
 
   const infoBook = await readBookbyID(data);
 
-  if (_.isEqual(userId, infoBook.idUSer) === false) {
+  if (_.toString(infoBook.idUSer) !== userId){
     throw new Error("No puedes eliminar este libro");
   }
 
