@@ -105,4 +105,23 @@ async function updateCanceled(infoOrder, idOrder, data) {
   return updateResult;
 }
 
-module.exports = { createOrder, updateOrder, readOrdersbyID, readOrders };
+async function deleteOrder(idOrder, token) {
+  const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
+  const userId = decodedToken._id;
+
+  const infoOrder = await readOrdersbyID(idOrder);
+
+  if (!infoOrder) {
+    throw new Error("No se encontro la orden");
+  }
+
+  if (_.toString(infoOrder.idUser) !== userId) {
+    throw new Error("No puedes eliminar esta orden");
+  }
+
+  const deletionResult = await deleteOrderMongo(idOrder);
+
+  return deletionResult;
+}
+
+module.exports = { createOrder, updateOrder, readOrdersbyID, readOrders, deleteOrder };

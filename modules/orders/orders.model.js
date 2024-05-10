@@ -7,7 +7,8 @@ const pedidoSchema = new mongoose.Schema({
   books: [{
     _id: false,
     idBook: { type: mongoose.Schema.Types.ObjectId, ref: 'Book' }
-  }]
+  }],
+  active: { type: Boolean, default: true }
 }, 
 {
   versionKey: false,

@@ -4,7 +4,8 @@ const {
   createOrder,
   updateOrder,
   readOrdersbyID,
-  readOrders
+  readOrders,
+  deleteOrder
 } = require("./orders.controller");
 
 async function getAllOrders() {
@@ -83,7 +84,7 @@ async function patchOrders(req, res) {
 
 async function deleteBook(req, res) {
   try {
-    const bookID = req.params.id;
+    const idOrder = req.params.id;
 
     // Extraer el token del encabezado "Authorization"
     const authHeader = req.headers["authorization"];
@@ -93,17 +94,14 @@ async function deleteBook(req, res) {
         throw new Error("Token de autenticación no proporcionado");
     }
 
-    if (!bookID) {
-      throw new Error("No se proporcionó un ID de usuario");
-    }
 
-    const books = await deleteUser(bookID, token);
+    const orders = await deleteOrder(idOrder, token);
     
-    if (books.modifiedCount === 0){
+    if (orders.modifiedCount === 0){
         throw new Error("No se pudo borrar el usuario");
     }
 
-    res.status(200).json({ mensaje: "Usuario eliminado" });
+    res.status(200).json({ mensaje: "Pedido eliminado" });
   } catch (error) {
     res.status(500).json({ mensaje: error.message });
   }

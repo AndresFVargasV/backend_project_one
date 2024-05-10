@@ -28,7 +28,7 @@ async function updateOrderMongo(OrderId, data) {
 
 async function deleteOrderMongo(OrderId) {
   const OrderDeleted = await Order.updateOne(
-    { identification: OrderId },
+    { _id: OrderId },
     { active: false }
   );
 
