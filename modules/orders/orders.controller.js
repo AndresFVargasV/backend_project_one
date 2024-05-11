@@ -35,6 +35,11 @@ async function createOrder(data, token) {
   const librosPromises = data.libros.map((libro) => readBookbyID(libro));
   const libros = await Promise.all(librosPromises);
 
+  //Quiero verificar que todos los libros pertenezcan al mismo usuario
+  const unicoDueño = libros.forEach((libro) => libro.idUSer === userId ? true: false)
+
+  console.log(unicoDueño)
+
   const totalPrice = libros.reduce(
     (acc, libro) => acc + parseFloat(libro.price.toString()),
     0

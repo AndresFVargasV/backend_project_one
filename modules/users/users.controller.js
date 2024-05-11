@@ -35,8 +35,6 @@ async function createUser(data, token) {
 
   const user = await readUsersbyIDMongo(identification);
 
-  console.log(user);
-
   if (user && user.active) {
     throw new Error("El usuario ya existe");
   }
@@ -76,10 +74,8 @@ async function deleteUser(data, token) {
     throw new Error("No hay coincidencia de usuario");
   }
 
-  console.log(userId);
-
   const existingUser = await readUsersbyIDMongo(userId);
-  console.log(existingUser);
+  
 
   if (existingUser.l || !existingUser.active) {
     throw new Error("Usuario no encontrado o ya fue eliminado");
