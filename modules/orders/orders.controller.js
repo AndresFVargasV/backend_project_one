@@ -36,9 +36,11 @@ async function createOrder(data, token) {
   const libros = await Promise.all(librosPromises);
 
   //Quiero verificar que todos los libros pertenezcan al mismo usuario
-  const unicoDueño = libros.forEach((libro) => libro.idUSer === userId ? true: false)
+  const librosUser = libros.filter((libro) => _.toString(libro.idUSer) === _.toString(libros[0].idUSer));
 
-  console.log(unicoDueño)
+  if (librosUser.length !== data.libros.length) {
+    throw new Error("Los libros no le pertenecen a un unico usuario.");
+  }
 
   const totalPrice = libros.reduce(
     (acc, libro) => acc + parseFloat(libro.price.toString()),
@@ -70,8 +72,6 @@ async function updateOrder(idOrder, data, token) {
   }
 
   const idBook = infoOrder.books.map((book) => book.idBook);
-
-  console.log(idBook);
 
   const librosPromises = idBook.map((libro) => readBookbyID(libro));
   const libros = await Promise.all(librosPromises);
