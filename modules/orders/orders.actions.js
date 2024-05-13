@@ -5,10 +5,8 @@ async function readOrdersbyIDMongo(data) {
   return OrderbyID;
 }
 
-async function readOrdersMongo() {
-  const Orders = await Order.find();
-
-  return Orders;
+async function readOrdersMongo(query) {
+  return Order.find(query);
 }
 
 async function createOrderMongo(userId, value, libros) {

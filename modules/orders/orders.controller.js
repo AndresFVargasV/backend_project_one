@@ -8,21 +8,54 @@ const {
 const jwt = require("jsonwebtoken");
 const dotend = require("dotenv");
 const readBookbyID = require("../books/books.controller").readBookbyID;
+const readUsersbyID = require("../users/users.controller").readUsersbyID;
 const updateBook = require("../books/books.controller").updateBook;
 const _ = require("lodash");
 
 dotend.config();
 
-async function readOrders() {
-  const orders = await readOrdersMongo();
+async function readOrders(query, token) {
+  const filter = {};
+
+  const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
+  const userId = decodedToken._id;
+
+  const user = await readUsersbyID(userId);
+
+  if (!user.active || _.toString(user._id) !== userId) {
+    throw new Error("Usuario no autenticado.");
+  }
+
+  if (!query.hasOwnProperty("active")) {
+    query.active = true;
+  }
+
+  if (query.startDate && query.endDate) {
+    filter.createdAt = {
+      $gte: new Date(query.startDate),
+      $lte: new Date(query.endDate)
+    };
+  }
+
+  if (query.state) {
+    filter.state = query.state;
+  }
+
+  
+  const orders = await readOrdersMongo(filter);
+
+  if (orders.length === 0) {
+    throw new Error("No se encontraron ordenes con estas caracteristicas.");
+  }
+
   return orders;
 }
 
 async function readOrdersbyID(data) {
   const orders = await readOrdersbyIDMongo(data);
 
-  if (!orders) {
-    throw new Error("No se encontró la orden");
+  if (orders.length === 0) {
+    throw new Error("No se encontró la orden.");
   }
 
   return orders;
@@ -31,6 +64,12 @@ async function readOrdersbyID(data) {
 async function createOrder(data, token) {
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
   const userId = decodedToken._id;
+
+  const user = await readUsersbyID(userId);
+
+  if (!user.active || _.toString(user._id) !== userId) {
+    throw new Error("Usuario no autenticado.");
+  }
 
   const librosPromises = data.libros.map((libro) => readBookbyID(libro));
   const libros = await Promise.all(librosPromises);
@@ -59,6 +98,12 @@ async function createOrder(data, token) {
 async function updateOrder(idOrder, data, token) {
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
   const userId = decodedToken._id;
+
+  const user = await readUsersbyID(userId);
+
+  if (!user.active || _.toString(user._id) !== userId) {
+    throw new Error("Usuario no autenticado.");
+  }
 
   const infoOrder = await readOrdersbyID(idOrder);
 
@@ -114,6 +159,12 @@ async function updateCanceled(infoOrder, idOrder, data) {
 async function deleteOrder(idOrder, token) {
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
   const userId = decodedToken._id;
+
+  const user = await readUsersbyID(userId);
+
+  if (!user.active || _.toString(user._id) !== userId) {
+    throw new Error("Usuario no autenticado.");
+  }
 
   const infoOrder = await readOrdersbyID(idOrder);
 

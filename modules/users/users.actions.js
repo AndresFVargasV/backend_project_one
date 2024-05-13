@@ -17,12 +17,6 @@ async function readUsersbyIDMongo(data) {
     return user;
 }
 
-async function readUsersMongo() {
-    const users = await User.find();
-
-    return users;
-}
-
 async function createUserMongo(data) {
     const userCreated = User.create(data);
 
@@ -43,7 +37,6 @@ async function deleteUserMongo(userId) {
 
 
 module.exports = {
-    readUsersMongo,
     readUsersbyIDMongo,
     createUserMongo,
     updateUserMongo,

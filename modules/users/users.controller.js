@@ -1,5 +1,4 @@
 const {
-  readUsersMongo,
   readUsersbyIDMongo,
   createUserMongo,
   updateUserMongo,
@@ -15,16 +14,6 @@ async function readUsersbyID(data) {
 
   if (!searchResult || !searchResult.active) {
     throw new Error("No existe el usuario");
-  }
-
-  return searchResult;
-}
-
-async function readUsers() {
-  const searchResult = await readUsersMongo();
-
-  if (!searchResult) {
-    throw new Error("No se encontraron usuarios");
   }
 
   return searchResult;
@@ -87,7 +76,6 @@ async function deleteUser(data, token) {
 }
 
 module.exports = {
-  readUsers,
   readUsersbyID,
   createUser,
   updateUser,

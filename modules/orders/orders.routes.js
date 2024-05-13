@@ -8,14 +8,12 @@ const {
   deleteOrder
 } = require("./orders.controller");
 
-async function getAllOrders() {
-  const orders = await readOrdersMongo();
-  return orders;
-}
-
-async function getOrdersbyID(req, res) {
+async function getAllOrders(req, res) {
   try {
-    const orders = await readOrdersbyID(req.params.id);
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    const orders = await readOrders(req.query, token);
 
     res.status(200).json({ ...orders });
   } catch (error) {
@@ -23,9 +21,9 @@ async function getOrdersbyID(req, res) {
   }
 }
 
-async function getAllOrders(req, res) {
+async function getOrdersbyID(req, res) {
   try {
-    const orders = await readOrders();
+    const orders = await readOrdersbyID(req.params.id);
 
     res.status(200).json({ ...orders });
   } catch (error) {

@@ -5,6 +5,7 @@ async function readBookbyIDMongo(id) {
 }
 
 async function readBooksMongo(query) {
+
   return Book.find(query);
 }
 
@@ -13,11 +14,17 @@ async function createBookMongo(userId, book) {
 }
 
 async function updateBookMongo(infoBook, data) {
-  return Book.updateOne({_id: infoBook._id }, data);
+  return Book.updateOne({ _id: infoBook._id }, data);
 }
 
-async function deleteBookMongo(id){
-  return Book.updateOne({_id: id}, {active: false});
+async function deleteBookMongo(id) {
+  return Book.updateOne({ _id: id }, { active: false });
 }
 
-module.exports = { readBookbyIDMongo, readBooksMongo, createBookMongo, updateBookMongo, deleteBookMongo };
+module.exports = {
+  readBookbyIDMongo,
+  readBooksMongo,
+  createBookMongo,
+  updateBookMongo,
+  deleteBookMongo,
+};

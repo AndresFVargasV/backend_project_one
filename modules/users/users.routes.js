@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const {
-  readUsers,
   readUsersbyID,
   createUser,
   updateUser,
@@ -15,15 +14,6 @@ async function getUsersbyID(req, res) {
     res.status(200).json({
       ...users
     });
-  } catch (error) {
-    res.status(500).json({ mensaje: error.message });
-  }
-}
-
-async function getAllUsers(req, res) {
-  try {
-    const users = await readUsers();
-    res.status(200).json({...users});
   } catch (error) {
     res.status(500).json({ mensaje: error.message });
   }
@@ -96,7 +86,6 @@ async function deleteUsers(req, res) {
   }
 }
 
-router.get("/", getAllUsers);
 router.get("/:id", getUsersbyID);
 router.post("/", postUsers);
 router.patch("/", patchUsers);
