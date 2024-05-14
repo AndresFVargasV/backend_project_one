@@ -26,10 +26,6 @@ async function readOrders(query, token) {
     throw new Error("Usuario no autenticado.");
   }
 
-  if (!query.hasOwnProperty("active")) {
-    query.active = true;
-  }
-
   if (query.startDate && query.endDate) {
     filter.createdAt = {
       $gte: new Date(query.startDate),
@@ -37,8 +33,8 @@ async function readOrders(query, token) {
     };
   }
 
-  if (query.state) {
-    filter.state = query.state;
+  if (query.active) {
+    filter.active = query.active;
   }
 
   

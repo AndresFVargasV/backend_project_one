@@ -6,6 +6,7 @@ const {
 } = require("./users.actions");
 const jwt = require("jsonwebtoken");
 const dotend = require("dotenv");
+const _ = require("lodash");
 
 dotend.config();
 
@@ -38,7 +39,7 @@ async function createUser(data, token) {
   return creationResult;
 }
 
-async function updateUser(data, token) {
+async function updateUser(data, iduser, token) {
   // Verificar el token JWT para obtener el ID de usuario
   const decodedToken = jwt.verify(token, process.env.SECRET_KEY); // 'SECRET_KEY' es la clave secreta para firmar y verificar el token
   const userId = decodedToken._id;
@@ -47,6 +48,10 @@ async function updateUser(data, token) {
 
   if (!existingUser || !existingUser.active) {
     throw new Error("Usuario no encontrado");
+  }
+
+  if (userId !== _.toString(iduser)) {
+    throw new Error("No hay coincidencia de usuario");
   }
 
   const updateResult = await updateUserMongo(userId, data);
@@ -66,8 +71,8 @@ async function deleteUser(data, token) {
   const existingUser = await readUsersbyIDMongo(userId);
   
 
-  if (existingUser.l || !existingUser.active) {
-    throw new Error("Usuario no encontrado o ya fue eliminado");
+  if (!existingUser || !existingUser.active) {
+    throw new Error("Usuario no encontrado");
   }
 
   const deleteResult = await deleteUserMongo(data);

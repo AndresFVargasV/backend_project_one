@@ -45,7 +45,7 @@ async function patchUsers(req, res) {
       throw new Error("Token de autenticación no proporcionado");
     }
 
-    const users = await updateUser(req.body, token);
+    const users = await updateUser(req.body, req.params.id, token);
 
     if (users.modifiedCount === 0) {
       throw new Error("No se pudo actualizar el usuario");
@@ -88,7 +88,7 @@ async function deleteUsers(req, res) {
 
 router.get("/:id", getUsersbyID);
 router.post("/", postUsers);
-router.patch("/", patchUsers);
+router.patch("/:id", patchUsers);
 router.delete("/:id", deleteUsers);
 
 module.exports = router;

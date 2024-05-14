@@ -48,7 +48,7 @@ async function createBook(data, token) {
 
   const user = await readUsersbyID(userId);
 
-  if (!user.active || user._id !== userId) {
+  if (!user.active || _.toString(user._id) !== userId) {
     throw new Error("El usuario no está activo o no existe.");
   }
 
@@ -62,7 +62,7 @@ async function updateBook(idBook, data, token) {
 
   const infoBook = await readBookbyID(idBook);
 
-  if (_.toString(infoBook.idUSer) !== userId) {
+  if (_.toString(infoBook.idUSer) !== userId || !infoBook.active) {
     throw new Error("No puedes actualizar este libro.");
   }
 
